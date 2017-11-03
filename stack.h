@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <utility>
 #include <mutex>
+#include <memory>
+#include <new>
+
 template <typename T>
 class stack
 {
@@ -17,9 +20,7 @@ public:
     stack<T>& operator = (stack<T> const &)  noexcept;
     size_t count() const noexcept;
     void push(T const &) /* strong */;
-    void pop() /* strong */;
-    T top() /* strong */;
-
+    auto pop() -> std::shared_ptr<T>/*strong*/;
 
 
 private:
@@ -107,29 +108,12 @@ void stack<T>::push(T const& value)
 }
 
 template <typename T>
-void stack<T>::pop()
+auto stack<T>::pop() -> std::shared_ptr<T>
 {
-    std::lock_guard<std::mutex> a(mtx);
+    std::lock_guard<std::mutex> lock(std::mutex mutex_);
+    auto top = std::make_shared<T>(array_[count_ - 1]);
     if (count_ == 0)
-    {
-        throw "Stack is empty! Try again!\n";
-    }
-    else
-    {
-        --count_;
-    }
-}
-
-template <typename T>
-T stack<T>::top()
-{
-    std::lock_guard<std::mutex> a(mtx);
-    if (count_ == 0)
-    {
-        throw "Stack is empty!";
-    }
-    else
-    {
-        return array_[count_ - 1];
-    }
+        throw std::logic_error("Stack is empty");
+    --count_;
+    return top;
 }
