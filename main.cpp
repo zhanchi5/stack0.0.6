@@ -1,6 +1,5 @@
 #include "stack.h"
 #include <thread>
-#include <mutex>
 #include <unistd.h>
 
 template<typename T>
@@ -21,7 +20,7 @@ void consumer(stack<T>& stack_,std::mutex& mtx){
     for (;;){
 
         try {
-            std::cout<<stack_.top() << "-" << "\n";
+            std::cout<<stack_.pop() << "-" << "\n";
             stack_.pop();
 
 
