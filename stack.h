@@ -109,3 +109,4 @@ void stack<T>::swap(stack<T>& other)noexcept
 	std::swap(count_, other.count_);
 	mutex_.unlock();
 other.mutex_.unlock();
+}
