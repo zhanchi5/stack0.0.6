@@ -3,36 +3,37 @@
 #include <unistd.h>
 
 template<typename T>
-void producer(stack<T> &stack_, std::mutex& mtx){
-
-
-    for (;;){
-        int a = rand();
-        stack_.push(a);
-        std::cout<< a << "+" << "\n";
-        std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % (3) + 1));
-
-
-    }
+void producer(stack<int> &stack_)
+{
+	for (;;)
+	{
+		try
+		{
+			stack_.push(std::rand() % 100);
+		}
+		catch (std::bad_alloc)
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(std::rand() % (3) + 1));
+		}
+		std::this_thread::sleep_for(std::chrono::seconds(std::rand() % (3) + 1));
+	}
 }
 template<typename T>
-void consumer(stack<T>& stack_,std::mutex& mtx){
-    for (;;){
-
-        try {
-            std::cout<<stack_.pop() << "-" << "\n";
-            stack_.pop();
-
-
-        }
-        catch(...) {
-        }
-
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % (3) + 2));
-    }
+void consumer(stack<int> &stack_)
+{
+	for (;;)
+	{
+		try
+		{
+			std::shared_ptr<int> ptr = stack_.try_pop();
+			if (ptr == nullptr)
+			{
+				stack_.wait_and_pop();
+			}
+		}
+		std::this_thread::sleep_for(std::chrono::seconds(std::rand() % (3) + 2));
+	}
 }
-
 int main(){
     stack<int> st1;
     std::mutex mt1;
