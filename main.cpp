@@ -2,7 +2,6 @@
 #include <thread>
 #include <unistd.h>
 
-template<typename T>
 void producer(stack<int> &stack_)
 {
 	for (;;)
@@ -18,7 +17,7 @@ void producer(stack<int> &stack_)
 		std::this_thread::sleep_for(std::chrono::seconds(std::rand() % (3) + 1));
 	}
 }
-template<typename T>
+
 void consumer(stack<int> &stack_)
 {
 	for (;;)
