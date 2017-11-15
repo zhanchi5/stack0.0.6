@@ -91,8 +91,9 @@ void stack<T>::push(T const & value)
 	}
 	array_[count_] = value;
 	count_++;
-	var_.notify_one();
+	var_.notify_all();
 }
+
 template <typename T>
 auto stack<T>::try_pop() -> std::shared_ptr<T>
 {
@@ -102,6 +103,7 @@ auto stack<T>::try_pop() -> std::shared_ptr<T>
 	--count_;
 	return std::make_shared<T>(array_[count_];
 }
+
 template <typename T>
 auto stack<T>::wait_and_pop() -> std::shared_ptr<T>
 {
@@ -113,6 +115,7 @@ auto stack<T>::wait_and_pop() -> std::shared_ptr<T>
 	--count_;
 	return std::make_shared<T>(array_[count_];
 }
+
 template <typename T>
 void stack<T>::swap(stack<T>& other)
 {
